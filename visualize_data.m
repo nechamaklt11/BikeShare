@@ -4,36 +4,37 @@ function visualize_data(data_struct, varargin)
 if ~isempty(varargin)
     [colX,colY,colZ] = varargin{:};
 else
-%     colX = 6 ; colY=12 ; colZ=14;
-    colX = 5 ; colY=11 ; colZ=13;
+    colX = 4 ; colY=10 ; colZ=12; %day of the week, feeled temerture, wind
 end
  
 samples = data_struct.train_x;
 labels = data_struct.train_y;
-num_samples = length(labels);
 
 pos_ind = find(labels == 1);
 neg_ind = find(labels == 0);
 
 %pos samples
-X = [samples{pos_ind,colX}];
-Y = [samples{pos_ind,colY}];
-Z = [samples{pos_ind,colZ}];
+X = samples(pos_ind,colX);
+Y = samples(pos_ind,colY);
+Z = samples(pos_ind,colZ);
 
 %neg samples
-x = [samples{neg_ind,colX}];
-y = [samples{neg_ind,colY}];
-z = [samples{neg_ind,colZ}];
+x = samples(neg_ind,colX);
+y = samples(neg_ind,colY);
+z = samples(neg_ind,colZ);
 
 
 figure
-h=scatter3(X,Y,Z,'MarkerEdgeColor','k','MarkerFaceColor','g')
+scatter3(X,Y.*50,Z.*50,'MarkerEdgeColor','k','MarkerFaceColor','g');
 hold on
-scatter3(x,y,z,'MarkerEdgeColor','k','MarkerFaceColor','r')
-
+scatter3(x,y.*67,z.*67,'MarkerEdgeColor','k','MarkerFaceColor','r')
+set(gca,'XLim',[1 12]) 
+%set(get(gca,'YLabel'),'Position',[0.5325   -1.6496   17.5000]);
 title('This is a title','FontSize',15)%%%%%%%%to change
-legend('Popular Riding Time','Unpopular Riding Time')
-xlabel('propertyA')
-ylabel('propertyB')
-zlabel('propertyC')
+legend('Popular Riding Day','Unpopular Riding Day')
+xlabel('Month')
+ylabel('Apparent Tempartue (celsius)')
+zlabel('Wind Speed (km/h)')
+view(32.9000,16.5600);
+
 
