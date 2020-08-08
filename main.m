@@ -19,4 +19,4 @@ X = [test_inputs; ones(1,size(test_inputs,2))]; %add a bias row
 accuracy = test_regression(X,test_targets,weights);
 
 %% SVM model 
-SVMtrain(inputs ,targets, nn_params);
+SVMTrain_update(inputs ,targets, test_inputs, test_targets);
