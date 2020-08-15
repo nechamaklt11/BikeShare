@@ -8,10 +8,14 @@ load('data4analysis')  %every column is a sample!!
  
 %% NEURAL NETWORK
 nn_params=set_nn_params;
-[net_accuracy,net_accuracy_avg] =neural_network(inputs,targets,train_ind,valid_ind,nn_params,test_inputs,test_targets);
+[net_accuracy,net_accuracy_avg]=neural_network(inputs,targets,train_ind,valid_ind,nn_params,test_inputs,test_targets);
 
 %% LOGISTIC REGRESSION
 reg_params = set_reg_params;
 [reg_accuracy,reg_accuracy_avg] = logistic_regression(inputs,targets,train_ind,valid_ind,reg_params,test_inputs,test_targets);
 
-%% SVMtrial
+%% SVM model 
+SVMTrain_update(inputs ,targets, test_inputs, test_targets);
+
+%% Tree model 
+tree(inputs ,targets, test_inputs, test_targets);

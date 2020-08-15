@@ -1,16 +1,14 @@
-function SVMtrain = SVMTrain_update(inputs ,targets, test_inputs, test_targets, params)
+function SVMtrain = SVMTrain_update(inputs ,targets, test_inputs, test_targets)
 
 inputsT=inputs'; targetsT=targets'; tInputs=test_inputs'; tTargets=test_targets';
 rng default;
-SVMmodel=fitcsvm(inputsT, targetsT, 'Solver', 'L1QP', ... %Using the quadric problem solving method
-    'Standardize',true, 'KernelFunction','RBF',... 
-    'KernelScale','auto', 'Verbose', 2, 'ClassNames',[0,1], ...
-    'KFold', 5, 'Crossval', 'on'); % Cross-validation of 5 datasets from the training set
+SVMmodel=fitcsvm(inputsT, targetsT,  ... %Using the quadric problem solving method
+    'OptimizeHyperparameters','auto', ...
+    'HyperparameterOptimizationOptions',struct('SaveIntermediateResults', true, 'MaxObjectiveEvaluations', 10)); 
 
-[labelout, score]=predict(SVMmodel.Trained{1,:}, tInputs);
+cvmodel = crossval(SVMmodel,'KFold',5);
 
-%L1 = kfoldLoss(SVMmodel, 'mode','individual');
-%L = loss(SVMmodel.Trained{1,:},tInputs,tTargets);
+[labelout, score]=predict(cvmodel.Trained{1,:}, tInputs);
 
 accuracy = 0;
 for i=1:length(tTargets)
@@ -18,4 +16,5 @@ for i=1:length(tTargets)
         accuracy=accuracy+1;
     end
 end
-accuracy=accuracy/length(tTargets);
+
+accuracy=accuracy/length(tTargets)*100;
