@@ -4,8 +4,8 @@ inputsT=inputs'; targetsT=targets'; tInputs=test_inputs'; tTargets=test_targets'
 [train_ind,valid_ind]=cross_validation(length(targets),5); %train_ind, valid_ind: indeces for validation and train groups
 for j=1:5
     for i=1:length(train_ind{1})
-        train_inx{1,j}(train_ind{1,j}(i,1),:)=inputsT(train_ind{1,j}(i,1),:);
-        targets_inx{1,j}(train_ind{1,j}(i,1),1)=targetsT(train_ind{1,j}(i,1),1);
+        train_inx{1,j}(train_ind{1,j}(1,i),:)=inputsT(train_ind{1,j}(1,i),:);
+        targets_inx{1,j}(train_ind{1,j}(1,i),1)=targetsT(train_ind{1,j}(1,i),1);
     end
 end
 
