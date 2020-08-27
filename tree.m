@@ -1,35 +1,26 @@
-function [tree_acc, tree_acc_avg, predictions_avg, tree_vperf] = tree(inputs ,targets, test_inputs, test_targets, data)
-
-load(data)
-x=inputs';
-t=targets';
-[train_idx,valid_idx]=cross_validation(length(targets),5); %train_ind,valid_ind: indeces for validation and train groups
-train_size = length(train_idx{1});
-
-A{1,1}=x([1:117],:);
-A{1,2}=x([118:234],:);
-A{1,3}=x([234:350],:);
-A{1,4}=x([351:467],:);
-A{1,5}=x([469:585],:);
-B{1,1}=t([1:117]);
-B{1,2}=t([118:234]);
-B{1,3}=t([234:350]);
-B{1,4}=t([351:467],:);
-B{1,5}=t([469:585],:);
-
+function [tree_acc, tree_acc_avg, predictions_avg, tree_vperf] = tree(inputs, targets, test_inputs, test_targets, params)
 inputsT=inputs'; targetsT=targets'; tInputs=test_inputs'; tTargets=test_targets';
 
-weights=ones(117,1);
-labelout=[];
+[train_ind,valid_ind]=cross_validation(length(targets),5); %train_ind, valid_ind: indeces for validation and train groups
+for j=1:5
+    for i=1:length(train_ind{1})
+        train_inx{1,j}(train_ind{1,j}(i,1),:)=inputsT(train_ind{1,j}(i,1),:);
+        targets_inx{1,j}(train_ind{1,j}(i,1),1)=targetsT(train_ind{1,j}(i,1),1);
+    end
+end
 
+weights=ones(585,1);
+labelout=[];
 for k=1:5
-    tree=fitctree(A{1,k}, B{1,k}, ...
-        'MinLeafSize',2, 'MaxNumSplits', 50, 'Prune', 'on', 'Weights', weights,...
+    tree=fitctree(train_inx{1,k}, targets_inx{1,k},...
+        'MinLeafSize',params.MinLeafSize, 'MaxNumSplits', params.MaxNumSplits,  ...
         'PredictorNames', {'date', 'season', 'year', 'month', 'holiday', 'weekday', 'working day', 'situation', 'temp', 'atemp', 'humidity', 'windspeed'});
     
     [cost,secost,ntermnodes,bestlevel] = cvloss(tree, 'Subtrees','all');
     resubcost = resubLoss(tree, 'Subtrees','all');
-    plot_perform(ntermnodes, cost, resubcost, secost, bestlevel);
+    if params.plot==true
+        plot_perform(ntermnodes, cost, resubcost, secost, bestlevel);
+    end
     
     labelout(:,k)=predict(tree, tInputs);
     accuracy=0;
@@ -42,10 +33,14 @@ for k=1:5
     tree_vperf(k)=min(cost);
     
 end
-%'MinLeafSize',2, 'MaxNumSplits', Inf, 'Prune', 'off', 'Weights', weights,...
 tree_vperf=mean(tree_vperf);
-pt = prune(tree,'Level',bestlevel);
-view(pt,'Mode','graph');
+
+if params.Prune==true
+    pt = prune(tree,'Level',bestlevel);
+    view(pt,'Mode','graph');
+else
+    view(tree,'Mode','graph');
+end
 
 %average cross validation performance
 predictions_avg = round(mean(labelout'));
@@ -64,7 +59,6 @@ for k=1:5
 end
 tree_acc_avg=sum(tree_acc)/k;
 
-n=1;
 function plot_perform(ntermnodes, cost, resubcost, secost, bestlevel)
 %plot performance - training error vs validation error
     figure;
