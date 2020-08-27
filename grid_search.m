@@ -1,8 +1,4 @@
 function optimal_vals = grid_search(param1,val1,param2,val2,param3,val3,data,params,mode)
-%1 - net
-%2 - logistic regression
-%3 - SVM
-%4 - Trees
 
 load(data)
 combs=combvec(val1,val2,val3); %all possible combinations
@@ -23,8 +19,10 @@ for i=1:length(combs)
             [~,~,~,vperf] =neural_network(data,params);
         case 2
             [~,~,~,vperf] = logistic_regression(data,params);
-       % case 3
-        % case 4  
+        case 3
+            [~,~,~,vperf] = tree(data,params);
+        %case 4  
+            %[~,~,~,vperf] = SVMtrain(data,params);
     end
     
     if vperf<best_vperf
