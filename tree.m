@@ -1,4 +1,8 @@
-function [tree_acc, tree_acc_avg, predictions_avg, tree_vperf] = tree(inputs, targets, test_inputs, test_targets, params)
+function [tree_acc, tree_acc_avg, predictions_avg, tree_vperf] = tree(data,params)
+%params: a structure with default setting
+%vperf: average validation performance
+
+load(data)
 inputsT=inputs'; targetsT=targets'; tInputs=test_inputs'; tTargets=test_targets';
 
 [train_ind,valid_ind]=cross_validation(length(targets),5); %train_ind, valid_ind: indeces for validation and train groups
@@ -9,7 +13,6 @@ for j=1:5
     end
 end
 
-weights=ones(585,1);
 labelout=[];
 for k=1:5
     tree=fitctree(train_inx{1,k}, targets_inx{1,k},...
