@@ -45,7 +45,6 @@ for k=1:5
     end
     svm_acc(k)=accuracy/length(tTargets)*100;
 end
-svm_acc_avg=sum(svm_acc)/k;
 
 if params.plot==true
    n=1; 

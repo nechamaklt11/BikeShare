@@ -73,7 +73,6 @@ for k=1:5
     end
     tree_acc(k)=accuracy/length(tTargets)*100;
 end
-tree_acc_avg=sum(tree_acc)/k;
 
 function plot_perform(ntermnodes, cost, resubcost, secost, bestlevel)
 %plot performance - training error vs validation error
