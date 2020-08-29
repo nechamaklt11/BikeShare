@@ -19,7 +19,6 @@ accuracy_bar(reg_accuracy, reg_accuracy_avg, 'logistic regression accuracy acros
 tree_params = set_tree_params;
 [tree_accuracy, tree_accuracy_avg, predicted_tree_y, tree_vperf]=tree('data4analysis',tree_params);
 accuracy_bar(tree_accuracy, tree_accuracy_avg, 'trees accuracy across folds')
-% !!!! Change data load
 
 %% SVM model 
 svm_params = set_svm_params;
