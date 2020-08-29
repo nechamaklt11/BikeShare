@@ -29,6 +29,6 @@ net_best_params=grid_search('learning_rate',[0 0.001 0.01 0.1 1],'max_epochs',[1
 %%
 reg_best_params=grid_search('learning_rate',[0.001 0.01 0.1 0.5 1],'max_epochs',[10 20 100 250,500],'lambda',[0 0.005 0.05 0.5],'data4analysis',reg_params,2);
 %%
-tree_best_params=grid_search('MinLeafSize',[1 2 3 4 5], 'MaxNumSplits',[10 25 50 100 150], 'Prune', [false true],'data4analysis',tree_params,3);
+tree_best_params=grid_search('MinLeafSize',[1 2 3 4 5], 'MaxNumSplits',[10 25 50 100 150], 'Prune', ['on' 'off'],'data4analysis',tree_params,3);
 %%
 svm_best_params=grid_search('learning_rate',[0.001 0.01 0.1 0.5 1], 'IterationLimit', [50 500 1000 2000] ,'lambda',[0.0005 0.005 0.05 0.5] ,'data4analysis',svm_params,4);

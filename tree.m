@@ -16,7 +16,6 @@ end
 labelout=[];
 for k=1:5
     tree=fitctree(train_inx{1,k}, targets_inx{1,k},...
-        'MinLeafSize',params.MinLeafSize, 'MaxNumSplits', params.MaxNumSplits,  ...
         'PredictorNames', {'date', 'season', 'year', 'month', 'holiday', 'weekday', 'working day', 'situation', 'temp', 'atemp', 'humidity', 'windspeed'});
     
     [cost,secost,ntermnodes,bestlevel] = cvloss(tree, 'Subtrees','all');
@@ -39,7 +38,7 @@ end
 tree_vperf=mean(tree_vperf);
 
 if params.plot==true
-    if params.Prune==true
+    if params.Prune=='on'
         pt = prune(tree,'Level',bestlevel);
         view(pt,'Mode','graph');
     else
@@ -73,7 +72,7 @@ for k=1:5
     end
     tree_acc(k)=accuracy/length(tTargets)*100;
 end
-
+n=1;
 function plot_perform(ntermnodes, cost, resubcost, secost, bestlevel)
 %plot performance - training error vs validation error
     figure;
@@ -85,7 +84,7 @@ function plot_perform(ntermnodes, cost, resubcost, secost, bestlevel)
     hold on
     plot([0 ntermnodes(1)], [cutoff cutoff], 'k:')
     plot(ntermnodes(bestlevel+1), cost(bestlevel+1), 'mo')
-    legend('Cross-validation','Resubstitution','Min + 1 std. err.','Best choice')
+    legend('Cross-validation','Misclassification error','Min + 1 std. err.','Best choice')
     title('Desicion Tree - Model Performance - Training Vs Validation ')
     hold off
 
