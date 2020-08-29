@@ -87,6 +87,7 @@ function plot_perform(ntermnodes, cost, resubcost, secost, bestlevel)
     plot([0 ntermnodes(1)], [cutoff cutoff], 'k:')
     plot(ntermnodes(bestlevel+1), cost(bestlevel+1), 'mo')
     legend('Cross-validation','Resubstitution','Min + 1 std. err.','Best choice')
+    title('Desicion Tree - Model Performance - Training Vs Validation ')
     hold off
 
 
