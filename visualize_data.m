@@ -4,7 +4,7 @@ function visualize_data(data_struct, varargin)
 if ~isempty(varargin)
     [colX,colY,colZ] = varargin{:};
 else
-    colX = 4 ; colY=10 ; colZ=12; %day of the week, feeled temerture, wind
+    colX = 4 ; colY=10 ; colZ=12; %day of the week, apparent temerture, wind
 end
  
 samples = data_struct.train_x;
@@ -25,12 +25,12 @@ z = samples(neg_ind,colZ);
 
 
 figure
-scatter3(X,Y.*50,Z.*50,'MarkerEdgeColor','k','MarkerFaceColor','g');
+scatter3(X,Y.*50,Z.*60,'MarkerEdgeColor','k','MarkerFaceColor','g');
 hold on
-scatter3(x,y.*67,z.*67,'MarkerEdgeColor','k','MarkerFaceColor','r')
+scatter3(x,y.*50,z.*60,'MarkerEdgeColor','k','MarkerFaceColor','r')
 set(gca,'XLim',[1 12]) 
 %set(get(gca,'YLabel'),'Position',[0.5325   -1.6496   17.5000]);
-title('This is a title','FontSize',15)%%%%%%%%to change
+title('Bike Data in Different Days','FontSize',15)%%%%%%%%to change
 legend('Popular Riding Day','Unpopular Riding Day')
 xlabel('Month')
 ylabel('Apparent Tempartue (celsius)')

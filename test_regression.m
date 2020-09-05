@@ -1,8 +1,8 @@
-function accuracy = test_regression(x,t,w)
+function [accuracy,predictions] = test_regression(x,t,w)
 y = w'*x;
 y=logistic_func(y);
-y(y<0.5)=0; y(y>=0.5)=1;
-diff=y-t;
+predictions(y<0.5)=0; predictions(y>=0.5)=1;
+diff=predictions-t;
 num_hits= sum(diff==0);
 accuracy = (num_hits/length(t))*100;
 
