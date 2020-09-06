@@ -90,6 +90,14 @@ y = w'*x;
 g = logistic_func(y);
 valid_cost=sum(cross_entropy(g,t)+lambda*sum(w.^2))/length(t);
 
+function [accuracy,predictions] = test_regression(x,t,w)
+y = w'*x;
+y=logistic_func(y);
+predictions(y<0.5)=0; predictions(y>=0.5)=1;
+diff=predictions-t;
+num_hits= sum(diff==0);
+accuracy = (num_hits/length(t))*100;
+
 function plot_perform(cost,valid_cost,epoch)
 %plot performance - training error vs validation error
 figure
