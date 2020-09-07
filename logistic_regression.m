@@ -1,6 +1,18 @@
-function [accuracy,accuracy_avg] = logistic_regression(x,t,train_idx,valid_idx,params,test_inputs,test_targets)
-%EVERY COLUMN REPRESENTS A SAMPLE!!!
-%params: max_epoch, threshold, learning_rate
+function [accuracy,accuracy_avg,predictions_avg,vperf] = logistic_regression(data,params)
+
+%INPUTS:
+%data: inputs and targets, for test and train groups
+%params: a structure with default setting
+%OUTPUTS:
+%accuracy: accuracy for each fold
+%accuracy_avg: mean cross-validation accuracy
+% predicted_y_avg: cross_validation model predictions
+%vperf: lowest validation performance, averaged across folds
+
+load(data)
+x=inputs;
+t=targets;
+[train_idx,valid_idx]=cross_validation(length(targets),5); %train_ind,valid_ind: indeces for validation and train groups
 
 lr = params.learning_rate;
 max_epoch = params.max_epochs;
@@ -12,8 +24,8 @@ train_size = length(train_idx{1});
 bias = ones(1,num_samples); %add bias after the last feature
 x = [x ; bias]; %add bias row
 accuracy = zeros(1,5);
-weights=zeros(num_features+1,5);
-
+predictions = zeros(5,length(test_targets)) ;
+best_vperf=zeros(1,5); %best validation performance
 rng(1) %for better randomization
 
 for k=1:5
@@ -54,16 +66,22 @@ for k=1:5
     
     cost = cost(1:epoch-1);
     valid_cost = valid_cost(1:epoch-1);
-    weights(:,k) = best_w;
+    best_vperf(1,k)=min(valid_cost);
     
     %test accuracy
     X = [test_inputs; ones(1,size(test_inputs,2))]; %add a bias row
-    accuracy(k) = test_regression(X,test_targets,best_w);
-    plot_perform(cost,valid_cost,epoch-1)
+    [accuracy(k),predictions(k,:)] = test_regression(X,test_targets,best_w);
+    if params.plot==true
+        plot_perform(cost,valid_cost,epoch-1)
+    end
 end
-%average performance
-avg_weights = mean(weights,2);
-accuracy_avg=test_regression(X,test_targets,avg_weights);
+
+%average cross validation performance
+predictions_avg = round(mean(predictions,1));
+diff=predictions_avg-test_targets;
+num_hits= sum(diff==0);
+accuracy_avg = (num_hits/length(test_targets))*100;
+vperf=mean(best_vperf);
 
 function g = logistic_func(x)
 % logistic function
@@ -80,6 +98,14 @@ y = w'*x;
 g = logistic_func(y);
 valid_cost=sum(cross_entropy(g,t)+lambda*sum(w.^2))/length(t);
 
+function [accuracy,predictions] = test_regression(x,t,w)
+y = w'*x;
+y=logistic_func(y);
+predictions(y<0.5)=0; predictions(y>=0.5)=1;
+diff=predictions-t;
+num_hits= sum(diff==0);
+accuracy = (num_hits/length(t))*100;
+
 function plot_perform(cost,valid_cost,epoch)
 %plot performance - training error vs validation error
 figure
@@ -90,9 +116,3 @@ title('Linear Regression - Model Performance - Training Vs Validation ')
 xlabel('Epoch'); ylabel('Error (Cross-Entropy)')
 legend('Training Error ','Validation Error')
 hold off
-
-
-
-
-
-
